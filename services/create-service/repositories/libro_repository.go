@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Interfaz pública del repositorio
@@ -77,7 +78,8 @@ func (r *mongoLibroRepo) Actualizar(ctx context.Context, id string, datos bson.M
 		return nil, errors.New("ID inválido")
 	}
 	datos["actualizado_en"] = time.Now().Unix()
-	res := r.coleccion.FindOneAndUpdate(ctx, bson.M{"_id": oid}, bson.M{"$set": datos})
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+	res := r.coleccion.FindOneAndUpdate(ctx, bson.M{"_id": oid}, bson.M{"$set": datos}, opts)
 	var actualizado models.Libro
 	if err := res.Decode(&actualizado); err != nil {
 		return nil, err

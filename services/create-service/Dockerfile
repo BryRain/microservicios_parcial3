@@ -1,20 +1,17 @@
-# Etapa 1: compilación
-FROM golang:1.22 AS builder
+# syntax=docker/dockerfile:1
+FROM golang:1.22 AS build
 
 WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o create-service ./cmd/main.go
 
-RUN go mod tidy
-RUN go build -o create_service .
-
-# Etapa 2: imagen final
-FROM gcr.io/distroless/base-debian12
-
+FROM gcr.io/distroless/static-debian11
 WORKDIR /app
-COPY --from=builder /app/create_service /app/create_service
-
-# El contenedor siempre expone el puerto interno donde escucha la app Go
+COPY --from=build /app/create-service /app/create-service
 EXPOSE 8080
-
-# Arrancar la app
-CMD ["./create_service"]
+USER nonroot:nonroot
+ENTRYPOINT ["/app/create-service"]

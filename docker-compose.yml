@@ -1,9 +1,6 @@
 version: '3.9'
 
 services:
-  # ========================
-  # 🗃️ MongoDB
-  # ========================
   mongodb:
     image: mongo:6.0
     container_name: mongodb
@@ -24,9 +21,6 @@ services:
     networks:
       - internal_net
 
-  # ========================
-  # 📗 CREATE Service
-  # ========================
   create_service:
     build: ./services/create-service
     container_name: create-service
@@ -37,12 +31,17 @@ services:
       MONGO_DB: ${MONGO_DB}
       MONGO_COLLECTION: ${MONGO_COLLECTION}
     restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - internal_net
 
-  # ========================
-  # 📘 READ Service
-  # ========================
   read_service:
     build: ./services/read-service
     container_name: read-service
@@ -53,12 +52,17 @@ services:
       MONGO_DB: ${MONGO_DB}
       MONGO_COLLECTION: ${MONGO_COLLECTION}
     restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - internal_net
 
-  # ========================
-  # ✏️ UPDATE Service
-  # ========================
   update_service:
     build: ./services/update-service
     container_name: update-service
@@ -69,12 +73,17 @@ services:
       MONGO_DB: ${MONGO_DB}
       MONGO_COLLECTION: ${MONGO_COLLECTION}
     restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - internal_net
 
-  # ========================
-  # 🗑️ DELETE Service
-  # ========================
   delete_service:
     build: ./services/delete-service
     container_name: delete-service
@@ -85,12 +94,17 @@ services:
       MONGO_DB: ${MONGO_DB}
       MONGO_COLLECTION: ${MONGO_COLLECTION}
     restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8083/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - internal_net
 
-# ========================
-# 🔗 Red y Volúmenes
-# ========================
 networks:
   internal_net:
     driver: bridge

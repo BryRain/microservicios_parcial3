@@ -1,3 +1,24 @@
+# Go build
+/bin
+/pkg
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Git
 .git
-node_modules
+.gitignore
+
+# Editor
+.vscode
+.idea
+
+# Env & backups
+.env
+*.env
+backups/
 *.log
+
+# Docker
+Dockerfile*

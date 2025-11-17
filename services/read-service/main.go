@@ -26,11 +26,15 @@ func main() {
 	}
 
 	db := client.Database(dbName)
-	repo := &repository.LibroRepository{Collection: db.Collection(collectionName)}
+	repo := &repository.LibroRepositoryMongo{Collection: db.Collection(collectionName)}
 	svc := &service.LibroService{Repo: repo}
 	ctrl := &controller.LibroController{Service: svc}
 
 	http.HandleFunc("/libros", ctrl.ObtenerLibros)
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "OK")
+	})
 
 	fmt.Println("📘 Servicio READ corriendo en puerto 8081")
 	log.Fatal(http.ListenAndServe(":8081", nil))

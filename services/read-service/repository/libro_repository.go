@@ -10,11 +10,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type LibroRepository struct {
+type LibroRepositorio interface {
+	ObtenerTodos(ctx context.Context) ([]model.Libro, error)
+}
+
+type LibroRepositoryMongo struct {
 	Collection *mongo.Collection
 }
 
-func (r *LibroRepository) ObtenerTodos(ctx context.Context) ([]model.Libro, error) {
+func NewLibroRepositoryMongo(collection *mongo.Collection) *LibroRepositoryMongo {
+	return &LibroRepositoryMongo{Collection: collection}
+}
+
+func (r *LibroRepositoryMongo) ObtenerTodos(ctx context.Context) ([]model.Libro, error) {
 	cursor, err := r.Collection.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, err
