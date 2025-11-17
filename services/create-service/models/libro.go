@@ -3,6 +3,7 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 // Libro representa un libro en la base de datos
+
 type Libro struct {
 	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Titulo        string             `bson:"titulo" json:"titulo"`
