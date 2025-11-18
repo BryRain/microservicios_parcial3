@@ -22,10 +22,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd="mongo --eval 'db.adminCommand(\"ping\")'"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd="mongo --eval 'db.adminCommand(\"ping\")'" --health-interval=10s --health-timeout=5s --health-retries=5
     env:
       MONGO_USER: root
       MONGO_PASSWORD: secret
@@ -132,6 +129,3 @@ jobs:
           tag_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
-
-          
-          
