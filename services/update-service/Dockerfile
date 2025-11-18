@@ -4,13 +4,13 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o update_service .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o update-service main.go
 
 FROM gcr.io/distroless/base-debian12
 
 WORKDIR /app
-COPY --from=builder /app/update_service /app/update_service
+COPY --from=builder /app/update-service /app/update-service
 
 EXPOSE 8082
 
-CMD ["./update_service"]
+CMD ["./update-service"]

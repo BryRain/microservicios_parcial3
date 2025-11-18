@@ -4,13 +4,13 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy
-RUN go build -o read_service .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o read-service main.go
 
 FROM gcr.io/distroless/base-debian12
 
 WORKDIR /app
-COPY --from=builder /app/read_service /app/read_service
+COPY --from=builder /app/read-service /app/read-service
 
 EXPOSE 8081
 
-CMD ["./read_service"]
+CMD ["./read-service"]

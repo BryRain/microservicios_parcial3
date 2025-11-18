@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	mongoURI := os.Getenv("MONGO_URI")
+	mongoURI := "mongodb://" + os.Getenv("MONGO_USER") + ":" + os.Getenv("MONGO_PASSWORD") + "@" + os.Getenv("MONGO_HOST") + ":" + os.Getenv("MONGO_PORT")
 	dbName := os.Getenv("MONGO_DB")
 	collectionName := os.Getenv("MONGO_COLLECTION")
 
@@ -33,7 +33,7 @@ func main() {
 	http.HandleFunc("/libros", ctrl.ObtenerLibros)
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "OK")
+		_, _ = fmt.Fprintln(w, "OK")
 	})
 
 	fmt.Println("📘 Servicio READ corriendo en puerto 8081")

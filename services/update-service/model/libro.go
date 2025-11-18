@@ -5,7 +5,7 @@ import (
 )
 
 type Libro struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Titulo    string             `bson:"titulo" json:"titulo"`
 	Autor     string             `bson:"autor" json:"autor"`
 	Editorial string             `bson:"editorial" json:"editorial"`
