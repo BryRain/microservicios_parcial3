@@ -11,7 +11,7 @@ import (
 )
 
 func TestMongoConnection(t *testing.T) {
-	uri := "mongodb://" + os.Getenv("MONGO_USER") + ":" + os.Getenv("MONGO_PASS") +
+	uri := "mongodb://" + os.Getenv("MONGO_USER") + ":" + os.Getenv("MONGO_PASSWORD") +
 		"@" + os.Getenv("MONGO_HOST") + ":" + os.Getenv("MONGO_PORT")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -23,4 +23,3 @@ func TestMongoConnection(t *testing.T) {
 		t.Fatalf("Ping falló: %v", err)
 	}
 }
-
