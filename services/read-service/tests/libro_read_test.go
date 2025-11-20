@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // MockLibroRepository is a mock implementation of the LibroRepositorio interface
@@ -31,10 +32,16 @@ func TestLibroService_ObtenerLibros_Exitoso(t *testing.T) {
 	mockRepo := new(MockLibroRepository)
 	libroService := service.LibroService{Repo: mockRepo}
 
+	id1, err1 := primitive.ObjectIDFromHex("000000000000000000000001")
+	id2, err2 := primitive.ObjectIDFromHex("000000000000000000000002")
+	if err1 != nil || err2 != nil {
+		t.Fatalf("Error creando ObjectID: %v %v", err1, err2)
+	}
+
 	// Expected result
 	expectedLibros := []model.Libro{
-		{ID: "1", Titulo: "El Quijote", Autor: "Cervantes", Anio: 1605, Editorial: "Santillana"},
-		{ID: "2", Titulo: "Cien Años de Soledad", Autor: "García Márquez", Anio: 1967, Editorial: "Sudamericana"},
+		{ID: id1, Titulo: "El Quijote", Autor: "Cervantes", Anio: 1605, Editorial: "Santillana"},
+		{ID: id2, Titulo: "Cien Años de Soledad", Autor: "García Márquez", Anio: 1967, Editorial: "Sudamericana"},
 	}
 
 	// Configure the mock
