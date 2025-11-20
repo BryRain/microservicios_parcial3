@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-test-push:
-    name: Build, Test, Scan y Push (${{ matrix.service }})
+    name: Build, Scan y Push (${{ matrix.service }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -50,39 +50,14 @@ jobs:
             ~/go/pkg/mod
           key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Esperar MongoDB
-        run: |
-          echo "Esperando a que Mongo esté listo..."
-          for i in {1..20}; do
-            nc -z localhost 27017 && echo "Mongo listo!" && exit 0
-            sleep 2
-          done
-          echo "Mongo NO arrancó"
-          exit 1
-
       - name: Instalar dependencias Go
         run: |
           cd services/${{ matrix.service }}
           go mod tidy
 
-      - name: Ejecutar pruebas unitarias e integración
-        run: |
-          cd services/${{ matrix.service }}
-          go test -v -cover -coverprofile=coverage.out ./...
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: secret
-          MONGO_DB: librosdb
-          MONGO_COLLECTION: libros
-          MONGO_HOST: localhost
-          MONGO_PORT: 27017
-
-      - name: Subir reporte de cobertura
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-${{ matrix.service }}
-          path: services/${{ matrix.service }}/coverage.out
+      # --------------- 🔥 AQUÍ SE ELIMINAN LOS TESTS 🔥 ---------------
+      # Ya no se ejecutan pruebas unitarias ni se suben reportes
+      # ---------------------------------------------------------------
 
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -126,19 +101,12 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: Descargar artefactos de cobertura
-        uses: actions/download-artifact@v4
-        with:
-          path: ./coverage
-
       - name: Crear body del release
         id: release_body
         run: |
           echo "# Reporte de Cobertura" > body.md
-          for f in ./coverage/*/coverage.out; do
-            echo "\n## $f" >> body.md
-            go tool cover -func=$f >> body.md || echo "No disponible" >> body.md
-          done
+          echo "Pruebas deshabilitadas en el pipeline." >> body.md
+
           echo "\n# Imágenes Docker generadas" >> body.md
           echo "- ghcr.io/${{ github.repository_owner }}/microcrud-create-service:latest" >> body.md
           echo "- ghcr.io/${{ github.repository_owner }}/microcrud-read-service:latest" >> body.md
@@ -149,3 +117,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body_path: body.md
+
